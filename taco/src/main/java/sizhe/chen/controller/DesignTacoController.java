@@ -3,11 +3,13 @@ package sizhe.chen.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import sizhe.chen.model.Ingredient;
 import sizhe.chen.model.Taco;
 import sizhe.chen.model.TacoOrder;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,11 +53,14 @@ public class DesignTacoController {
     }
 
     @PostMapping
-    public String processTaco(Taco taco, @ModelAttribute TacoOrder order){
+    public String processTaco(@Valid Taco taco, Errors errors, @ModelAttribute TacoOrder order){
+        if(errors.hasErrors()){
+            return "design";
+        }
         order.addTacos(taco);
         log.info("Processing taco: {}", taco);
 
-        return "design";
+        return "redirect:/orders/current";
     }
 
     @ModelAttribute(name = "taco")
