@@ -29,7 +29,8 @@ public class TacoOrder {
     private String deliveryStreet;
     @NotBlank(message = "State is required")
     private String state;
-    @CreditCardNumber(message = "Not a valid credit card number")
+//    @CreditCardNumber(message = "Not a valid credit card number")
+    @NotBlank(message = "credit card  is required")
     private String ccNumber;
     @Pattern(regexp = "^(0[1-9]|1[0-2])([\\/])([2-9][0-9])$",      message = "Must be formatted MM/YY")
     private String ccExpiration;
