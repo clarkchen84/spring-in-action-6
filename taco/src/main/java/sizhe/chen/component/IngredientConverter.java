@@ -1,8 +1,10 @@
 package sizhe.chen.component;
 
+import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import sizhe.chen.model.Ingredient;
+import sizhe.chen.repository.IngredientRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,21 +18,12 @@ import java.util.List;
  */
 
 @Component
+@AllArgsConstructor
 public class IngredientConverter implements Converter<String, Ingredient> {
+    private  final IngredientRepository ingredientRepository;
     @Override
     public Ingredient convert(String s) {
-        List<Ingredient> ingredients = Arrays.asList(
-                new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("COTO", "Corn Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("GRBF", "Ground Beef", Ingredient.Type.PROTEIN),
-                new Ingredient("CARN", "Carnitas", Ingredient.Type.PROTEIN),
-                new Ingredient("TMTO", "Diced Tomatoes", Ingredient.Type.VEGGIES),
-                new Ingredient("LETC", "Lettuce", Ingredient.Type.VEGGIES),
-                new Ingredient("CHED", "Cheddar", Ingredient.Type.CHEESE),
-                new Ingredient("JACK", "Monterrey Jack", Ingredient.Type.CHEESE),
-                new Ingredient("SLSA", "Salsa", Ingredient.Type.SAUCE),
-                new Ingredient("SRCR", "Sour Cream", Ingredient.Type.SAUCE)
-        );
-        return ingredients.stream().filter(ingredient -> ingredient.getId().equals(s)).findAny().orElse(null);
+
+        return ingredientRepository.findById(s).orElse(null);
     }
 }

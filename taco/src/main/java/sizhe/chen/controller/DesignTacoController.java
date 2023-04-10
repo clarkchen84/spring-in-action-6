@@ -1,6 +1,8 @@
 package sizhe.chen.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -8,11 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import sizhe.chen.model.Ingredient;
 import sizhe.chen.model.Taco;
 import sizhe.chen.model.TacoOrder;
+import sizhe.chen.repository.IngredientRepository;
 
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * @Author: sizhe.chen
@@ -25,22 +29,13 @@ import java.util.stream.Collectors;
 @Controller
 @SessionAttributes("tacoOrder")
 @RequestMapping("/design")
+@AllArgsConstructor
 public class DesignTacoController {
+    private final IngredientRepository ingredientRepository;
 
     @ModelAttribute
     public void addIngredientToMode(Model model) {
-        List<Ingredient> ingredients = Arrays.asList(
-                new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("COTO", "Corn Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("GRBF", "Ground Beef", Ingredient.Type.PROTEIN),
-                new Ingredient("CARN", "Carnitas", Ingredient.Type.PROTEIN),
-                new Ingredient("TMTO", "Diced Tomatoes", Ingredient.Type.VEGGIES),
-                new Ingredient("LETC", "Lettuce", Ingredient.Type.VEGGIES),
-                new Ingredient("CHED", "Cheddar", Ingredient.Type.CHEESE),
-                new Ingredient("JACK", "Monterrey Jack", Ingredient.Type.CHEESE),
-                new Ingredient("SLSA", "Salsa", Ingredient.Type.SAUCE),
-                new Ingredient("SRCR", "Sour Cream", Ingredient.Type.SAUCE)
-        );
+        Iterable<Ingredient> ingredients= ingredientRepository.findAll();
         for(Ingredient.Type type : Ingredient.Type.values()){
             model.addAttribute(type.toString().toLowerCase(),
                     findIngredientByType(ingredients,type));
@@ -72,8 +67,8 @@ public class DesignTacoController {
     public String showDesignForm(){
         return "design";
     }
-    private Iterable<Ingredient> findIngredientByType(List<Ingredient> ingredients, Ingredient.Type type){
-        return ingredients.stream().filter(item-> item.getType().equals(type))
+    private Iterable<Ingredient> findIngredientByType(Iterable<Ingredient> ingredients, Ingredient.Type type){
+        return StreamSupport.stream(ingredients.spliterator(),false).filter(item-> item.getType().equals(type))
                 .collect(Collectors.toList());
     }
 
